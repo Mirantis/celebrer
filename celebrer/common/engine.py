@@ -2,6 +2,8 @@ import oslo_messaging as messaging
 from oslo_messaging import target
 import uuid
 
+from celebrer.engine import handlers
+
 from oslo_config import cfg
 from oslo_log import log as logging
 
@@ -24,7 +26,8 @@ def get_rpc_service():
         RPC_SERVICE = []
         INSTANCE_ID = str(uuid.uuid4())
 
-        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'discovery', []))
+        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'discovery',
+                                                [handlers.DiscoveryHandler()]))
         RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'reports', []))
         RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'tasks', []))
     return RPC_SERVICE
