@@ -1,6 +1,7 @@
 from oslo_config import cfg
 from oslo_db import options
 
+from celebrer.common import config
 from celebrer.db import api
 
 CONF = cfg.CONF
@@ -35,4 +36,5 @@ CONF.register_cli_opt(command_opt)
 
 
 def main():
+    config.parse_args()
     CONF(project='celebrer')
