@@ -1,52 +1,29 @@
 from oslo_config import cfg
 from oslo_db import options
 
+from celebrer.db import api
+
 CONF = cfg.CONF
 options.set_defaults(CONF)
 
 
 class DBCommand(object):
 
-    def upgrade(self, config):
-        migration.upgrade(CONF.command.revision, config=config)
+    def setup_db(self):
+        api.setup_db()
 
-    def downgrade(self, config):
-        migration.downgrade(CONF.command.revision, config=config)
-
-    def revision(self, config):
-        migration.revision(CONF.command.message,
-                           CONF.command.autogenerate,
-                           config=config)
-
-    def stamp(self, config):
-        migration.stamp(CONF.command.revision, config=config)
-
-    def version(self, config):
-        print(migration.version())
+    def drop_db(self):
+        api.drop_db()
 
 
 def add_command_parsers(subparsers):
     command_object = DBCommand()
 
-    parser = subparsers.add_parser('upgrade')
-    parser.set_defaults(func=command_object.upgrade)
-    parser.add_argument('--revision', nargs='?')
+    parser = subparsers.add_parser('setup')
+    parser.set_defaults(func=command_object.setup_db())
 
-    parser = subparsers.add_parser('downgrade')
-    parser.set_defaults(func=command_object.downgrade)
-    parser.add_argument('--revision', nargs='?')
-
-    parser = subparsers.add_parser('stamp')
-    parser.add_argument('--revision', nargs='?')
-    parser.set_defaults(func=command_object.stamp)
-
-    parser = subparsers.add_parser('revision')
-    parser.add_argument('-m', '--message')
-    parser.add_argument('--autogenerate', action='store_true')
-    parser.set_defaults(func=command_object.revision)
-
-    parser = subparsers.add_parser('version')
-    parser.set_defaults(func=command_object.version)
+    parser = subparsers.add_parser('drop')
+    parser.set_defaults(func=command_object.drop_db())
 
 
 command_opt = cfg.SubCommandOpt('command',
