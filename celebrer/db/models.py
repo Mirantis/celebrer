@@ -44,7 +44,7 @@ class Task(Base, TimestampMixin):
     __tablename__ = 'task'
 
     component_name = sa.Column(sa.String(255), nullable=False)
-    service_list = sa.Column(sa.JsonBlob(), nullable=False)
+    service_list = sa.Column(types.JsonBlob(), nullable=False)
     action = sa.Column(sa.String(255), nullable=False)
     statuses = sa_orm.relationship("Status", backref='task',
                                    cascade='save-update, merge, delete')
