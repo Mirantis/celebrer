@@ -10,6 +10,7 @@ from sqlalchemy import orm as sa_orm
 
 from celebrer.db import types
 
+
 class TimestampMixin(object):
     __protected_attributes__ = set(["created", "updated"])
 
@@ -53,14 +54,14 @@ class Task(Base, TimestampMixin):
 
 class Status(Base, TimestampMixin):
     __tablename__ = 'status'
-    task_id = sa.Column(sa.String(32), sa.ForeignKey('task_id'))
+    task_id = sa.Column(sa.String(36), sa.ForeignKey('task.id'))
     text = sa.Column(sa.Text(), nullable=False)
 
 
 class Node(Base, TimestampMixin):
-    __tablename__ = 'nodes'
+    __tablename__ = 'node'
 
-    node_id = sa.Column(sa.String(32), unique=True, nullable=False)
+    node_id = sa.Column(sa.String(36), unique=True, nullable=False)
     services = sa_orm.relationship("Service", backref='node',
                                    cascade='save-update, merge, delete')
 
@@ -68,7 +69,7 @@ class Node(Base, TimestampMixin):
 class Service(Base, TimestampMixin):
     __tablename__ = 'services'
 
-    node_id = sa.Column(sa.String(32), sa.ForeignKey('node_id'))
+    node_id = sa.Column(sa.String(36), sa.ForeignKey('node.id'))
     name = sa.Column(sa.String(255), nullable=False)
     component = sa.Column(sa.String(255), nullable=False)
     # ToDO(all): Implement service status detection

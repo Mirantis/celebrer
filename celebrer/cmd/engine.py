@@ -8,6 +8,7 @@ from oslo_log import log as logging
 from oslo_service import service
 
 from celebrer.common import engine
+from celebrer.common import config
 
 CONF = cfg.CONF
 
@@ -27,6 +28,7 @@ if os.path.exists(os.path.join(root, 'celebrer', '__init__.py')):
 
 def main():
     try:
+        config.parse_args()
         logging.setup(CONF, 'celebrer')
         launcher = service.ServiceLauncher(CONF)
         for rpc_service in engine.get_rpc_service():

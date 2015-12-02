@@ -1,40 +1,27 @@
+import os
+import sys
+
 from oslo_config import cfg
-from oslo_db import options
 
 from celebrer.common import config
-from celebrer.db import api
+from celebrer.db import api as db_api
+
+# If ../imagination/__init__.py exists, add ../ to Python search path, so that
+# it will override what happens to be installed in /usr/(local/)lib/python...
+root = os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, os.pardir)
+if os.path.exists(os.path.join(root, 'celebrer', '__init__.py')):
+    sys.path.insert(0, root)
 
 CONF = cfg.CONF
-options.set_defaults(CONF)
-
-
-class DBCommand(object):
-
-    def setup_db(self):
-        api.setup_db()
-
-    def drop_db(self):
-        api.drop_db()
-
-
-def add_command_parsers(subparsers):
-    command_object = DBCommand()
-
-    parser = subparsers.add_parser('setup')
-    parser.set_defaults(func=command_object.setup_db())
-
-    parser = subparsers.add_parser('drop')
-    parser.set_defaults(func=command_object.drop_db())
-
-
-command_opt = cfg.SubCommandOpt('command',
-                                title='Command',
-                                help='Available commands',
-                                handler=add_command_parsers)
-
-CONF.register_cli_opt(command_opt)
 
 
 def main():
     config.parse_args()
-    CONF(project='celebrer')
+    try:
+        db_api.drop_db()
+    except:
+        pass
+    db_api.setup_db()
+
+if __name__ == '__main__':
+    main()

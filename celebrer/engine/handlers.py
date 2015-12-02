@@ -4,8 +4,6 @@ from celebrer.db import session
 
 
 class DiscoveryHandler:
-    def __init__(self):
-        pass
 
     def discover_services(self, context, services, node_uuid):
         unit = session.get_session()
@@ -13,7 +11,6 @@ class DiscoveryHandler:
             node = models.Node()
             node.node_id = node_uuid
             unit.add(node)
-            unit.commit()
 
             for component, service_list in services.items():
                 for service_name in service_list:
