@@ -28,6 +28,8 @@ def get_rpc_service():
 
         RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'discovery',
                                                 [handlers.DiscoveryHandler()]))
-        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'reports', []))
-        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'tasks', []))
+        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'reports',
+                                                [handlers.ReportsHandler()]))
+        RPC_SERVICE.append(_prepare_rpc_service(INSTANCE_ID, 'tasks',
+                                                [handlers.TasksHandler()]))
     return RPC_SERVICE

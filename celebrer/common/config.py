@@ -15,6 +15,11 @@ bind_opts = [
             help='Port the bind the celebrer API server to.'),
 ]
 
+celebrer_opts = [
+    cfg.StrOpt('reports-dir', default='/var/cache/celebrer',
+               help='Directory with received coverage reports')
+]
+
 CONF = cfg.CONF
 CONF.register_cli_opts(bind_opts)
 
