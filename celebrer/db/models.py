@@ -72,7 +72,7 @@ class Service(Base, TimestampMixin):
     node_id = sa.Column(sa.String(36), sa.ForeignKey('node.id'))
     name = sa.Column(sa.String(255), nullable=False)
     component = sa.Column(sa.String(255), nullable=False)
-    status = sa.String(sa.String(255), nullable=False)
+    status = sa.Column(sa.String(255), nullable=False)
     # ToDO(all): Implement service status detection
 
 
