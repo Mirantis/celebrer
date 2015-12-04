@@ -82,7 +82,7 @@ class TasksHandler:
         with unit.begin():
             unit.add(task_object)
 
-        rpc.get_client(component_name).__cast__('handle_task', task={
+        rpc.cast(component_name, 'handle_task', task={
             'action': 'start',
             'services': service_list,
             'task_id': task_object.id
@@ -97,7 +97,7 @@ class TasksHandler:
         with unit.begin():
             unit.add(task_object)
 
-        rpc.get_client(task_object.component_name).__cast__('handle_task', task={
+        rpc.cast(task_object.component_name, 'handle_task', task={
             'action': 'stop',
             'services': task_object.service_list,
             'task_id': task_object.id
@@ -111,7 +111,7 @@ class TasksHandler:
         with unit.begin():
             unit.add(task_object)
 
-        rpc.get_client(task_object.component_name).__cast__('handle_task', task={
+        rpc.call('collector', 'handle_task', task={
             'action': 'stop',
             'component_name': task_object.component_name,
             'task_id': task_object.id

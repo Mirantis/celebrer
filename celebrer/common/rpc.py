@@ -8,21 +8,23 @@ CONF = cfg.CONF
 TRANSPORT = None
 
 
-class RpcClient(object):
-    def __init__(self, transport, rkey):
-        client_target = target.Target('celebrer', rkey)
-        self._client = rpc.RPCClient(transport, client_target, timeout=15)
-
-    def __call__(self, method, **kwargs):
-        return self._client.call({}, method, **kwargs)
-
-    def __cast__(self, method, **kwargs):
-        return self._client.cast({}, method, **kwargs)
-
-
-def get_client(rkey):
+def call(rkey, method, **kwargs):
     global TRANSPORT
     if TRANSPORT is None:
         TRANSPORT = messaging.get_transport(CONF)
 
-    return RpcClient(TRANSPORT, rkey)
+    client_target = target.Target('celebrer', rkey, fanout=False)
+    client = rpc.RPCClient(TRANSPORT, client_target, timeout=15)
+
+    return client.call({}, method, **kwargs)
+
+
+def cast(rkey, method, **kwargs):
+    global TRANSPORT
+    if TRANSPORT is None:
+        TRANSPORT = messaging.get_transport(CONF)
+
+    client_target = target.Target('celebrer', rkey, fanout=True)
+    client = rpc.RPCClient(TRANSPORT, client_target, timeout=15)
+
+    return client.call({}, method, **kwargs)
