@@ -15,21 +15,26 @@ class DiscoveryHandler:
     def discover_services(self, context, services, node_uuid):
         unit = session.get_session()
 
-        with unit.begin():
-            node = models.Node()
-            node.node_id = node_uuid
-            unit.add(node)
+        node = unit.query(models.Node).filter_by(node_id=node_uuid).first()
+        if not node:
+            with unit.begin():
+                node = models.Node()
+                node.node_id = node_uuid
+                unit.add(node)
 
         with unit.begin():
-            node = unit.query(models.Node).filter_by(node_id=node_uuid).first()
             for component, service_list in services.items():
                 for service_name in service_list:
-                    service = models.Service()
-                    service.name = service_name
-                    service.component = component
-                    service.node_id = node.id
-                    service.status = 'Ready'
-                    unit.add(service)
+                    service = unit.query(models.Service).filter_by(node_id=node.id, name=service_name).first()
+                    if not service:
+                        service = models.Service()
+                        service.name = service_name
+                        service.component = component
+                        service.node_id = node.id
+                        service.status = 'Ready'
+                        unit.add(service)
+                    else:
+                        service.status = 'Ready'
 
 
 class ReportsHandler:
