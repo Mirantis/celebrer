@@ -28,6 +28,7 @@ class DiscoveryHandler:
                     service.name = service_name
                     service.component = component
                     service.node_id = node.id
+                    service.status = 'Ready'
                     unit.add(service)
 
 
@@ -86,6 +87,7 @@ class TasksHandler:
             'services': service_list,
             'task_id': task_object.id
         })
+        return {'task_id': task_object.id}
 
     def stop_task(self, task_id):
         unit = session.get_session()
