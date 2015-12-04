@@ -119,7 +119,7 @@ class TasksHandler:
             unit.add(task_object)
 
         rpc.call('collector', 'handle_task', task={
-            'action': 'stop',
+            'action': 'gen_report',
             'component_name': task_object.component_name,
             'id': task_object.id
         })
