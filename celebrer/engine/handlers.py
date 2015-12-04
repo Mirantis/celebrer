@@ -90,7 +90,7 @@ class TasksHandler:
         rpc.cast(component_name, 'handle_task', task={
             'action': 'start',
             'services': service_list,
-            'task_id': task_object.id
+            'id': task_object.id
         })
         return {'task_id': task_object.id}
 
