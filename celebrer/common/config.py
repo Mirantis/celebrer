@@ -22,6 +22,7 @@ celebrer_opts = [
 
 CONF = cfg.CONF
 CONF.register_cli_opts(bind_opts)
+CONF.register_cli_opts(celebrer_opts)
 
 
 def parse_args(args=None, usage=None, default_config_files=None):
