@@ -49,8 +49,10 @@ class ReportsHandler:
             status_object.task_id = status['task_id']
             status_object.text = status['status']
 
+            node = unit.query(models.Node).filter_by(node_id=status['server_id']).first()
+
             service = unit.query(models.Service).filter_by(
-                node_id=status['server_id'],
+                node_id=node.id,
                 name=status['service_name']
             ).first()
 
