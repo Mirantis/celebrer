@@ -27,4 +27,4 @@ def cast(rkey, method, **kwargs):
     client_target = target.Target('celebrer', rkey, fanout=True)
     client = rpc.RPCClient(TRANSPORT, client_target, timeout=15)
 
-    return client.call({}, method, **kwargs)
+    return client.cast({}, method, **kwargs)
