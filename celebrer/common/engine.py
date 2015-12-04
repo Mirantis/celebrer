@@ -16,7 +16,7 @@ LOG = logging.getLogger(__name__)
 
 def _prepare_rpc_service(server_id, rkey, endpoints):
     transport = messaging.get_transport(CONF)
-    s_target = target.Target('celeber', rkey, server=server_id)
+    s_target = target.Target('celebrer', rkey, server=server_id)
     return messaging.get_rpc_server(transport, s_target, endpoints, 'eventlet')
 
 
