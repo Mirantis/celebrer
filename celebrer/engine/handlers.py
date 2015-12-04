@@ -107,7 +107,7 @@ class TasksHandler:
         rpc.cast(task_object.component_name, 'handle_task', task={
             'action': 'stop',
             'services': task_object.service_list,
-            'task_id': task_object.id
+            'id': task_object.id
         })
 
     def get_report(self, context, task_id):
@@ -121,5 +121,5 @@ class TasksHandler:
         rpc.call('collector', 'handle_task', task={
             'action': 'stop',
             'component_name': task_object.component_name,
-            'task_id': task_object.id
+            'id': task_object.id
         })
