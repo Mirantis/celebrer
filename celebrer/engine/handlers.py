@@ -37,7 +37,7 @@ class ReportsHandler:
     def __init__(self):
         self.conf = CONF
 
-    def set_status(self, status):
+    def set_status(self, context, status):
         unit = session.get_session()
         with unit.begin():
             status_object = models.Status()
@@ -52,7 +52,7 @@ class ReportsHandler:
             service.status = status['status']
             unit.add(status_object)
 
-    def collect_report(self, component_name, binary_data, task_id):
+    def collect_report(self, context, component_name, binary_data, task_id):
         unit = session.get_session()
         with unit.begin():
             task = unit.query(models.Task).filter_by(id=task_id).first()
@@ -71,7 +71,7 @@ class TasksHandler:
     def __init__(self):
         self.conf = CONF
 
-    def create_task(self, component_name, service_list):
+    def create_task(self, context, component_name, service_list):
         unit = session.get_session()
         task_object = models.Task()
         task_object.status = 'Scheduled'
@@ -89,7 +89,7 @@ class TasksHandler:
         })
         return {'task_id': task_object.id}
 
-    def stop_task(self, task_id):
+    def stop_task(self, context, task_id):
         unit = session.get_session()
         task_object = unit.query(models.Task).filter_by(id=task_id).first()
         task_object.status = 'Stopping'
@@ -103,7 +103,7 @@ class TasksHandler:
             'task_id': task_object.id
         })
 
-    def get_report(self, task_id):
+    def get_report(self, context, task_id):
         unit = session.get_session()
         task_object = unit.query(models.Task).filter_by(id=task_id).first()
         task_object.status = 'Generating'
