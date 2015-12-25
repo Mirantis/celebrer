@@ -1,45 +1,58 @@
+import os
 from oslo_log import log as logging
 from webob import exc
 
+import json
 from celebrer.common import wsgi
-from celebrer.db import session as db_session
+from celebrer.common import rpc
+from celebrer.db import models
+from celebrer.db import session
 
+from oslo_config import cfg
 
+CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
 class Controller(object):
 
-    def get_results(self, request, task_id):
-        LOG.debug('Action:GetResult <TaskId: {0}>'.format(task_id))
+    def __init__(self):
+        self.conf = CONF
 
-        unit = db_session.get_session()
-        # result = actions.ActionServices.get_result(task_id, unit)
-        result = None
+    def list_services(self, request):
+        unit = session.get_session()
+        return json.dumps([node.to_dict() for node in
+                           unit.query(models.Service).all()])
 
-        if result is not None:
-            return result
+    def run_services(self, request):
+        if request.json_body['action'] == 'start':
+            return json.dumps(rpc.call(
+                'tasks',
+                'create_task',
+                service_list=request.json_body['services']))
+        elif request.json_body['action'] == 'stop':
+            return json.dumps(rpc.call(
+                'tasks',
+                'stop_task',
+                task_id=request.json_body['task_id']))
 
-        msg = 'Result for task with task_id: {} was not found.'.format(task_id)
+    def get_results(self, request, task_id=None):
+        unit = session.get_session()
+        if task_id:
+            return json.dumps([node.to_dict() for node in
+                               unit.query(models.Task).filter_by(id=task_id).
+                              first()])
+        return json.dumps([node.to_dict() for node in
+                           unit.query(models.Task).all()])
 
-        LOG.error(msg)
-        raise exc.HTTPNotFound(msg)
-
-    def create_action(self, request):
-        LOG.debug('Action:Create')
-
-        try:
-            unit = db_session.get_session()
-            # task_id = actions.ActionServices.submit_task(
-            #    request.json_body['action'], request.json_body['object_id'],
-            #    request.json_body['args'], 'test_token', unit)
-
-            return {'action_id': None}
-        except KeyError:
-            return {
-                'error': 'Unable to create action'
-            }
-
+    def get_report(self, request, task_id=None):
+        unit = session.get_session()
+        if not task_id:
+            raise exc.HTTPNotFound('Not found task')
+        if os.path.isfile('%s/%s' % (self.conf.reports_dir, task_id)):
+            return open('%s/%s' % (self.conf.reports_dir, task_id)).read()
+        else:
+            raise exc.HTTPNotFound('Not found report')
 
 def create_resource():
     return wsgi.Resource(Controller())

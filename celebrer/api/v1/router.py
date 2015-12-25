@@ -13,12 +13,12 @@ class APIv1(wsgi.Router):
         actions_resource = actions.create_resource()
         mapper.connect('/services',
                        controller=actions_resource,
-                       action='get_results',
+                       action='list_services',
                        conditions={'method': ['GET']}, path='')
 
         mapper.connect('/services',
                        controller=actions_resource,
-                       action='create_action',
+                       action='run_services',
                        conditions={'method': ['POST']}, path='')
 
         mapper.connect('/reports',
@@ -33,7 +33,7 @@ class APIv1(wsgi.Router):
 
         mapper.connect('/reports/{task_id}/download',
                        controller=actions_resource,
-                       action='get_results',
+                       action='get_report',
                        conditions={'method': ['GET']}, path='')
 
         super(APIv1, self).__init__(mapper)

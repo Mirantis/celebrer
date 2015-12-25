@@ -63,9 +63,8 @@ class ReportsHandler:
         unit = session.get_session()
         with unit.begin():
             task = unit.query(models.Task).filter_by(id=task_id).first()
-            report_path = '%s/%s_%s' % (
+            report_path = '%s/%s' % (
                     self.conf.reports_dir,
-                    component_name,
                     task_id)
             with open(report_path, 'w') as f:
                 f.write(binary_data.decode('base64'))
@@ -78,23 +77,33 @@ class TasksHandler:
     def __init__(self):
         self.conf = CONF
 
-    def create_task(self, context, component_name, service_list):
+    def create_task(self, context, service_list):
         unit = session.get_session()
         task_object = models.Task()
         task_object.status = 'Scheduled'
-        task_object.component_name = component_name
+        component_name = []
+        for component in service_list:
+            cur_component = component.split('-', 1)
+            if cur_component not in component_name:
+                component_name.append(cur_component)
         task_object.service_list = service_list
         task_object.action = 'start'
 
         with unit.begin():
             unit.add(task_object)
+        tasks_list = []
+        for component in component_name:
+            current_service_list = []
+            if component in service_list:
+                current_service_list.append(component)
+                rpc.cast(component_name, 'handle_task', task={
+                    'action': 'start',
+                    'services': current_service_list,
+                    'id': task_object.id
+                })
+                tasks_list.append(task_object.id)
 
-        rpc.cast(component_name, 'handle_task', task={
-            'action': 'start',
-            'services': service_list,
-            'id': task_object.id
-        })
-        return {'task_id': task_object.id}
+        return {'task_id': tasks_list}
 
     def stop_task(self, context, task_id):
         unit = session.get_session()
