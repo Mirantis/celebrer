@@ -6,6 +6,11 @@ from celebrer import version
 
 portType = types.Integer(1, 65535)
 
+paste_deploy_opts = [
+    cfg.StrOpt('flavor', help='Paste flavor'),
+    cfg.StrOpt('config_file', help='Path to Paste config file'),
+]
+
 bind_opts = [
     cfg.StrOpt('bind-host', default='0.0.0.0',
                help='Address to bind the celebrer API server to.'),
@@ -23,6 +28,7 @@ celebrer_opts = [
 CONF = cfg.CONF
 CONF.register_cli_opts(bind_opts)
 CONF.register_cli_opts(celebrer_opts)
+CONF.register_opts(paste_deploy_opts, group='paste_deploy')
 
 
 def parse_args(args=None, usage=None, default_config_files=None):
