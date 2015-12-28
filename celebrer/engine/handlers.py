@@ -79,30 +79,38 @@ class TasksHandler:
 
     def create_task(self, context, service_list):
         unit = session.get_session()
-        task_object = models.Task()
-        task_object.status = 'Scheduled'
-        component_name = []
-
-        for component in service_list:
-            cur_component = component.split('-')[0]
-            if cur_component not in component_name:
-                component_name.append(cur_component)
-        task_object.service_list = service_list
-        task_object.action = 'start'
-
-        with unit.begin():
-            unit.add(task_object)
+        component_names = []
         tasks_list = []
-        for component in component_name:
-            current_service_list = []
-            if component in service_list:
-                current_service_list.append(component)
-                rpc.cast(component_name, 'handle_task', task={
-                    'action': 'start',
-                    'services': current_service_list,
-                    'id': task_object.id
-                })
-                tasks_list.append(task_object.id)
+
+        for service_name in service_list:
+            cur_component = service_name.split('-')[0]
+            if cur_component not in component_names:
+                component_names.append(cur_component)
+
+        for component in component_names:
+            task_object = models.Task()
+            task_object.status = 'Scheduled'
+
+            task_object.service_list = service_list
+            task_object.component_name = component
+            task_object.action = 'start'
+
+            component_service_list = []
+
+            for service_name in service_list:
+                if component in service_name:
+                    component_service_list.append(component)
+
+            rpc.cast(component, 'handle_task', task={
+                'action': 'start',
+                'services': component_service_list,
+                'id': task_object.id
+            })
+
+            with unit.begin():
+                unit.add(task_object)
+
+            tasks_list.append(task_object.id)
 
         return {'task_id': tasks_list}
 
