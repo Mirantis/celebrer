@@ -21,8 +21,10 @@ class Controller(object):
 
     def list_services(self, request):
         unit = session.get_session()
-        return json.dumps([node.to_dict() for node in
-                           unit.query(models.Service).all()])
+        services = []
+        services = [service.name for service in
+                    unit.query(models.Service).all() if service.name not in services]
+        return json.dumps(services)
 
     def run_services(self, request):
         if request.json_body['action'] == 'start':
@@ -39,9 +41,8 @@ class Controller(object):
     def get_results(self, request, task_id=None):
         unit = session.get_session()
         if task_id:
-            return json.dumps([node.to_dict() for node in
-                               unit.query(models.Task).filter_by(id=task_id).
-                              first()])
+            task = unit.query(models.Task).filter_by(id=task_id).first()
+            return json.dumps(task.to_dict())
         return json.dumps([node.to_dict() for node in
                            unit.query(models.Task).all()])
 

@@ -1,5 +1,8 @@
 import uuid
 
+import time
+
+import datetime
 from oslo_db.sqlalchemy import models
 from oslo_utils import timeutils
 
@@ -34,7 +37,8 @@ class TimestampMixin(object):
 class _CelebrerBase(models.ModelBase):
     def to_dict(self):
         dictionary = self.__dict__.copy()
-        return dict((k, v) for k, v in dictionary.iteritems()
+        return dict(
+            (k, time.mktime(v.timetuple()) if isinstance(v, datetime.datetime) else v) for k, v in dictionary.iteritems()
                     if k != '_sa_instance_state')
 
 
