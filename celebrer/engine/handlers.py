@@ -82,8 +82,9 @@ class TasksHandler:
         task_object = models.Task()
         task_object.status = 'Scheduled'
         component_name = []
+
         for component in service_list:
-            cur_component = component.split('-', 1)
+            cur_component = component.split('-')[0]
             if cur_component not in component_name:
                 component_name.append(cur_component)
         task_object.service_list = service_list
