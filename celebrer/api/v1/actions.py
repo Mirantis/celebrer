@@ -31,7 +31,7 @@ class Controller(object):
             return json.dumps(rpc.call(
                 'tasks',
                 'create_task',
-                service_list=json.loads(request.json_body['services'])))
+                service_list=request.json_body['services']))
         elif request.json_body['action'] == 'stop':
             return json.dumps(rpc.call(
                 'tasks',
