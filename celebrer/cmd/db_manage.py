@@ -17,10 +17,11 @@ CONF = cfg.CONF
 
 def main():
     config.parse_args()
-    try:
-        db_api.drop_db()
-    except:
-        pass
+    # TODO(agalkin): Implement DB drop support
+    # try:
+    #     db_api.drop_db()
+    # except:
+    #     pass
     db_api.setup_db()
 
 if __name__ == '__main__':
