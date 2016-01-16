@@ -24,7 +24,8 @@ class Controller(object):
         services = []
         services = [service.name for service in
                     unit.query(models.Service).all() if service.name not in services]
-        return json.dumps(services)
+        data_resp = json.dumps({"services": services})
+        return data_resp
 
     def run_services(self, request):
         if request.json_body['action'] == 'start':
