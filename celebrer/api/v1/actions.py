@@ -21,9 +21,10 @@ class Controller(object):
 
     def list_services(self, request):
         unit = session.get_session()
-        services = []
-        services = [service.name for service in
-                    unit.query(models.Service).all() if service.name not in services]
+        #services = []
+        #services = [service.name for service in
+        #            unit.query(models.Service).all() if service.name not in services]
+        services = unit.query(models.Service).all()
         data_resp = json.dumps({"services": services})
         return data_resp
 
