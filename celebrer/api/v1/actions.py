@@ -27,11 +27,10 @@ class Controller(object):
         raw_services = unit.query(models.Service).all()
         services = []
         for service in raw_services:
-            services.append(
-                    {
-                        'name': service.name,
-                        }
-                )
+            if {'name': service.name} not in services:
+                services.append(
+                        {'name': service.name}
+                    )
         data_resp = json.dumps({"services": services})
         return data_resp
 
