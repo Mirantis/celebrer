@@ -28,11 +28,9 @@ class Controller(object):
         services = []
         for service in raw_services:
             services.append(
-                [
                     {
                         'name': service.name,
                         }
-                    ]
                 )
         data_resp = json.dumps({"services": services})
         return data_resp
