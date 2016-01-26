@@ -29,7 +29,8 @@ class Controller(object):
         for service in raw_services:
             if {'name': service.name} not in services:
                 services.append(
-                        {'name': service.name}
+                        {'id': service.id,
+                         'name': service.name}
                     )
         data_resp = json.dumps({"services": services})
         return data_resp
